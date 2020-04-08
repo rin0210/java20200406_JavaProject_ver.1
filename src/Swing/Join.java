@@ -30,7 +30,6 @@ public class Join extends JFrame {
 		super("회원가입");
 		this.cc = cc;
 		this.setLayout(null); // 배치관리자 해제
-		this.setBackground(new Color(97, 219, 240));
 		this.setBounds(0, 0, 350, 440);
 		setLocationRelativeTo(null); // 프레임창이 바탕화면 한가운데 띄워짐
 
