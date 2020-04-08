@@ -1,66 +1,100 @@
 package JDBC;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class MDAO implements DAOInterface {
 	private Connection conn;
 	private Statement stmt;
 	private ResultSet rs;
 
-	MDAO() {
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			System.out.println("클래스 로드 성공~!");
-
-		} catch (ClassNotFoundException e) {
-			System.out.println("클래스 로드 실패..");
-		}
+	MDAO(Connection conn) {
+		this.conn = conn;
 	}
 
-	private boolean connect() {
-		boolean cFalg = false;
+	// 전체 목록 가져오기
+	public ArrayList<Object> getList() {
+		MDTO m = null;
+		ArrayList<Object> obList = new ArrayList<>();
+		Object o = null;
+
 		try {
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "system", "11111111");
-			cFalg = true;
+			stmt = conn.createStatement();
+			String sql = "select * from member";
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				m = new MDTO();
+				m.setId(rs.getString("id"));
+				m.setPwd(rs.getString("pwd"));
+				m.setName(rs.getString("name"));
+				m.setTel(rs.getString("tel"));
+				m.setAddr(rs.getString("addr"));
+				m.setPoint(rs.getInt("point"));
+				m.setLev(rs.getInt("lev"));
+
+				o = (Object) m;
+				obList.add(o);
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return cFalg;
+
+		return obList;
 	}
 
 	// 아이디 중복체크
 	public boolean idCheck(String id) {
-		boolean result = false;
+		boolean result = true;
 
-		if (connect()) {
-			try {
-				stmt = conn.createStatement();
-				String sql = "select * from member where id='" + id + "'";
-				rs = stmt.executeQuery(sql);
-				if (rs.next()) { // 가져온 객체가 있다면
-					result = true;
-				}
-
-			} catch (SQLException e) {
-				e.printStackTrace();
+		try {
+			stmt = conn.createStatement();
+			String sql = "select * from member where id='" + id + "'";
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) { // 가져온 객체가 있다면
+				result = false;
 			}
-		} else {
-			System.out.println("DB 접속 오류..!");
-			System.exit(0);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		System.out.println("MDAO왔어?");
+
 		return result;
 	}
 
+	// 회원 등록
 	@Override
-	public void insert(String[] list) {
-		
+	public boolean insert(Object o) {
+		boolean result = false;
+//		System.out.println("MDAO insert 왔어?");
 
+		MDTO m = (MDTO) o;
+
+//		System.out.println("DB넣을꺼야?");
+		try {
+			String sql = "insert into member values(?,?,?,?,?,0,2)";
+			PreparedStatement psmt = conn.prepareStatement(sql);
+			psmt.setString(1, m.getId());
+			psmt.setString(2, m.getPwd());
+			psmt.setString(3, m.getName());
+			psmt.setString(4, m.getTel());
+			psmt.setString(5, m.getAddr());
+
+			int r = psmt.executeUpdate();
+
+			if (r > 0) {
+				result = true;
+			}
+			psmt.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 }

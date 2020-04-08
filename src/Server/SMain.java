@@ -11,7 +11,7 @@ public class SMain {
 		Socket withClient = null;
 
 		serverS = new ServerSocket();
-		serverS.bind(new InetSocketAddress("10.0.0.77", 9999));
+		serverS.bind(new InetSocketAddress("10.0.0.77", 9988));
 		
 		ServerCenter sc = new ServerCenter();
 

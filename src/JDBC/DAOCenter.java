@@ -1,12 +1,46 @@
 package JDBC;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 public class DAOCenter {
 	// 싱글톤
 	private static DAOCenter single = null;
+
 	private DAOInterface DAOIF = null;
+//	private MDAO mda = null;
+//	private RDAO rda = null;
+	private Connection conn = null;
+
+	private ArrayList<Object> obList = null;
 
 	private DAOCenter() {
+		admin();
+		connect();
+	}
 
+	private static void admin() {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			System.out.println("클래스 로드 성공~!");
+
+		} catch (ClassNotFoundException e) {
+			System.out.println("클래스 로드 실패..");
+		}
+	}
+
+	private boolean connect() {
+		boolean cFalg = false;
+		try {
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "system", "11111111");
+			cFalg = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return cFalg;
 	}
 
 	public static DAOCenter getInstance() {
@@ -16,20 +50,43 @@ public class DAOCenter {
 		return single;
 	}
 
-	public void insert(String s, String[] list) {
-		if (s.equals("join")) {
-			DAOIF = new MDAO();
-			DAOIF.insert(list);
+	// 전체 목록 가져오기
+	public ArrayList<Object> getList(String s) {
+		if (s.equals("member")) { // 회원목록
+			if (connect()) {
+				DAOIF = new MDAO(conn);
+				obList = DAOIF.getList();
+			}
+		}
+		return obList;
+	}
+
+	// 등록
+	public void insert(String s, Object ob) {
+		if (s.equals("member")) { // 회원등록
+			if (connect()) {
+				DAOIF = new MDAO(conn);
+				DAOIF.insert(ob);
+			} else {
+				System.out.println("DB 접속 오류..!");
+				System.exit(0);
+			}
 		}
 	}
 
 	// 아이디 중복체크
 	public boolean idCheck(String id) {
-		DAOIF = new MDAO();
-		if (DAOIF.idCheck(id) == true) { // 중복 아이디가 있다면
-			return true;
+		if (connect()) {
+			DAOIF = new MDAO(conn);
+			if (DAOIF.idCheck(id) == false) { // 중복 아이디가 있다면
+				return false;
+			}
+
+		} else {
+			System.out.println("DB 접속 오류..!");
+			System.exit(0);
 		}
-		return false;
+		return true;
 	}
 
 }

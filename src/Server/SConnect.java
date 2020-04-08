@@ -1,9 +1,7 @@
 package Server;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 
 public class SConnect extends Thread {
@@ -11,7 +9,7 @@ public class SConnect extends Thread {
 	private InputStream reMsg;
 	private OutputStream sendMsg;
 	private String id;
-	private ServerCenter sc = null;
+	private ServerCenter sc;
 
 	SConnect(Socket c) {
 		this.withClient = c;
@@ -73,13 +71,28 @@ public class SConnect extends Thread {
 //		}
 //	}
 
-	public void send(Socket withClient, String msg) {
-		System.out.println("SConnect왔니?");
+	public void send(Socket wc, String msg) {
+//		System.out.println("SConnect왔니?");
 		try {
-			sendMsg = withClient.getOutputStream();
-			sendMsg.write(msg.getBytes());
-			
+			if (this.withClient.equals(wc)) {
+				sendMsg = withClient.getOutputStream();
+				sendMsg.write(msg.getBytes());
+			}
+
 		} catch (Exception e) {
 		}
+	}
+
+	public void streamSet(Socket wc, String id) {
+		System.out.println(id + "님 로그인");
+		try {
+			if (this.withClient.equals(wc)) {
+				sendMsg = withClient.getOutputStream();
+				sendMsg.write(id.getBytes());
+			}
+
+		} catch (Exception e) {
+		}
+
 	}
 }

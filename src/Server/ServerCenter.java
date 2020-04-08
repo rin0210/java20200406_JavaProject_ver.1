@@ -2,7 +2,7 @@ package Server;
 
 import java.net.Socket;
 import java.util.ArrayList;
-
+import java.util.StringTokenizer;
 import JDBC.DAOCenter;
 import JDBC.MDTO;
 
@@ -10,9 +10,10 @@ public class ServerCenter {
 	private ArrayList<SConnect> sList = new ArrayList<>();
 	private DAOCenter dc = null;
 	private MDTO mt = null;
-	private boolean check = false; // 아이디 중복체크 했는지
+	private ArrayList<MDTO> memberList = new ArrayList<>();
+	private ArrayList<Object> obList = null;
 
-	public ServerCenter() {
+	ServerCenter() {
 		dc = DAOCenter.getInstance();
 	}
 
@@ -22,52 +23,96 @@ public class ServerCenter {
 
 	public void receive(Socket withClient, String msg) {
 		if ('*' == (msg.charAt(0))) { // 중복체크로
-			check = true;
 			idCheck(withClient, msg);
+
 		} else if ('/' == (msg.charAt(0))) { // 회원가입으로
-			joinGo(msg);
+			joinGo(withClient, msg);
+
 		} else if ('>' == (msg.charAt(0))) { // 로그인으로
-			loginGo(msg);
+			loginGo(withClient, msg);
 		}
 	}
 
 	// 로그인
-	private void loginGo(String msg) {
+	private void loginGo(Socket withClient, String msg) {
+		int fs = msg.indexOf(" ", 0);
+		int ed = msg.lastIndexOf(" ");
+//		String a = msg.substring(0, fs); // 조건 부분
+		String id = msg.substring(fs + 1, ed); // 아이디 부분
+		String pwd = msg.substring(ed + 1); // 비밀번호 부분
 
+		if (loginChk(id, pwd)) {
+			String m = "/login yes"; // 로그인 성공
+			for (SConnect s : sList) {
+				s.send(withClient, m);
+				s.streamSet(withClient, id);
+			}
+		} else {
+			String m = "/login no"; // 로그인 실패
+			for (SConnect s : sList) {
+				s.send(withClient, m);
+			}
+		}
+	}
+
+	// 로그인 체크
+	private boolean loginChk(String id, String pwd) {
+		this.obList = dc.getList("member"); // 회원목록 가져오기
+		for (Object o : obList) {
+			mt = (MDTO) o;
+			memberList.add(mt);
+		}
+		for (MDTO m : memberList) {
+			if (m.getId().equals(id) && m.getPwd().equals(pwd)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// 회원가입
-	private void joinGo(String msg) {
+	private void joinGo(Socket withClient, String msg) {
+		System.out.println(msg);
+
 		int ed = msg.indexOf(" ", 0);
-		String a = msg.substring(0, ed); // 조건 부분
-		String b = msg.substring(ed + 1); // 회원정보 부분
+//		String a = msg.substring(0, ed); // 조건 부분
+		String info = msg.substring(ed + 1); // 회원정보 부분
+
 		mt = new MDTO();
-
-		if (a.indexOf("id") == 0) {
-			mt.setId(b);
-		} else if (a.indexOf("pwd") == 0) {
-		} else if (a.indexOf("name") == 0) {
-		} else if (a.indexOf("tel") == 0) {
-		} else if (a.indexOf("addr") == 0) {
+		StringTokenizer st = new StringTokenizer(info, " ");
+//		System.out.println(st.countTokens());
+		while (st.hasMoreTokens()) {
+			for (int i = 0; i < st.countTokens(); i++) {
+				mt.setId(st.nextToken());
+				mt.setPwd(st.nextToken());
+				mt.setName(st.nextToken());
+				mt.setTel(st.nextToken());
+				mt.setAddr(st.nextToken());
+			}
 		}
+		dc.insert("member", (Object) mt);
 
-//		dc.insert("join", );
+		String m = "/join memberOk";
+
+		for (SConnect s : sList) {
+			s.send(withClient, m);
+		}
 	}
 
 	// 아이디 중복체크
 	private void idCheck(Socket withClient, String msg) {
+		int ed = msg.indexOf(" ", 0);
+		String id = msg.substring(ed + 1); // 아이디 부분
+
 		String m;
-		if (dc.idCheck(msg)) { // 중복 아이디가 있다면
-			m = "no";
+		if (dc.idCheck(id) == false) { // 중복 아이디가 있다면
+			m = "/join no";
 		} else {
-			m = "yes";
+			m = "/join yes";
 		}
 
 		for (SConnect s : sList) {
-			s.send(withClient,m);
+			s.send(withClient, m);
 		}
-		
-		check = false;
-
 	}
 }

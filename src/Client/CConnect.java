@@ -1,6 +1,5 @@
 package Client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -12,7 +11,6 @@ public class CConnect {
 	private InputStream reMsg = null;
 	private OutputStream sendMsg = null;
 	private String id = null;
-	private String pwd = null;
 	private HMain hm = null;
 
 	public CConnect(Socket s) {
@@ -22,7 +20,6 @@ public class CConnect {
 	}
 
 	public void receive() {
-		System.out.println("CConnect왔니?");
 		new Thread(new Runnable() {
 
 			@Override
@@ -37,7 +34,7 @@ public class CConnect {
 						String msg = new String(reBuffer);
 						msg = msg.trim();
 						System.out.println(msg);
-						
+
 						hm.setMsg(msg);
 					}
 				} catch (Exception e) {
@@ -48,27 +45,26 @@ public class CConnect {
 	}
 
 	public void send(String m) {
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					sendMsg = withServer.getOutputStream();
-					sendMsg.write(m.getBytes());
-					
-					reMsg = withServer.getInputStream();
-					byte[] reBuffer = new byte[100];
-					reMsg.read(reBuffer);
-					String msg = new String(reBuffer);
-					msg = msg.trim();
-					
-					System.out.println(msg);
-					
-				} catch (Exception e) {
-				}
-				
-			}
-		}).start();
+		try {
+			sendMsg = withServer.getOutputStream();
+			sendMsg.write(m.getBytes());
+
+		} catch (Exception e) {
+		}
+	}
+
+	public void streamSet(String id) {
+		try {
+			reMsg = withServer.getInputStream();
+			byte[] reBuffer = new byte[100];
+			reMsg.read(reBuffer);
+			id = new String(reBuffer);
+			id = id.trim();
+			this.id = id;
+			System.out.println(id + "님 정상접속되었습니다.");
+
+		} catch (Exception e) {
+		}
 	}
 
 }

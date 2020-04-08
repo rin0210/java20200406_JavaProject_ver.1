@@ -1,12 +1,14 @@
 package Swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,9 +19,9 @@ import javax.swing.JPanel;
 import Client.CConnect;
 
 public class HMain extends JFrame {
-	Join j;
-
-	CConnect cc = null;
+	private CConnect cc = null;
+	private Join j;
+	private Login l;
 
 	public HMain(CConnect cc) {
 		this.cc = cc;
@@ -49,20 +51,47 @@ public class HMain extends JFrame {
 
 		JButton loginBtn = new JButton("로그인");
 		loginBtn.setFont(new Font("돋움", Font.PLAIN, 12));
-		loginBtn.setBorderPainted(false); // 테두리선
-		loginBtn.setContentAreaFilled(false);
-		loginBtn.setFocusPainted(false);
+		loginBtn.setBorderPainted(false); // 버튼 테두리선 설정
+		loginBtn.setContentAreaFilled(false); // 버튼 영역 배경 표시 설정
+		loginBtn.setFocusPainted(false); // 포커스 표시 설정
 		loginP.add(loginBtn);
-
-		loginBtn.addActionListener(new ActionListener() {
+		
+		loginBtn.addMouseListener(new MouseListener() { // 로그인 버튼
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Login();
-				dispose();
+			public void mouseReleased(MouseEvent e) {
+			}
 
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				loginBtn.setForeground(Color.BLACK);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				loginBtn.setForeground(Color.GRAY);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				l = new Login(cc);
+				dispose();
 			}
 		});
+
+//		loginBtn.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				l = new Login(cc);
+//				dispose();
+//
+//			}
+//		});
 
 		JButton joinBtn = new JButton("회원가입");
 		joinBtn.setFont(new Font("돋움", Font.PLAIN, 12));
@@ -70,15 +99,42 @@ public class HMain extends JFrame {
 		joinBtn.setContentAreaFilled(false);
 		joinBtn.setFocusPainted(false);
 		loginP.add(joinBtn);
-
-		joinBtn.addActionListener(new ActionListener() {
+		
+		joinBtn.addMouseListener(new MouseListener() { // 회원가입 버튼
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				joinBtn.setForeground(Color.BLACK);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				joinBtn.setForeground(Color.GRAY);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
 				j = new Join(cc);
 				dispose();
 			}
 		});
+
+//		joinBtn.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				j = new Join(cc);
+//				dispose();
+//			}
+//		});
 
 		JButton nonMBtn = new JButton("비회원예약");
 		nonMBtn.setFont(new Font("돋움", Font.PLAIN, 12));
@@ -87,15 +143,42 @@ public class HMain extends JFrame {
 		nonMBtn.setFocusPainted(false);
 		loginP.add(nonMBtn);
 		nP.add(loginP, "North");
-
-		nonMBtn.addActionListener(new ActionListener() {
+		
+		nonMBtn.addMouseListener(new MouseListener() { // 비회원예약 버튼
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				new Choice();
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				nonMBtn.setForeground(Color.BLACK);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				nonMBtn.setForeground(Color.GRAY);
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+//				new Choice(cc);
 				dispose();
 			}
 		});
+
+//		nonMBtn.addActionListener(new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+////				new Choice(cc);
+//				dispose();
+//			}
+//		});
 
 		this.add(nP, "North");
 	}
@@ -113,13 +196,16 @@ public class HMain extends JFrame {
 	}
 
 	public void setMsg(String msg) {
-		System.out.println("HMain왔니?");
-		j.idChk(msg);
+//		System.out.println("HMain왔니?");
+		if (msg.indexOf("/join") == 0) {
+			j.chkMsg(msg);
+		} else if (msg.indexOf("/login") == 0) {
+			l.chkMsg(msg);
+		}
 	}
-	
+
 	public static void main(String[] args) {
 //		new HMain();
 	}
-
 
 }

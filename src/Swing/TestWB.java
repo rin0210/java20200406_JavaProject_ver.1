@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 
 public class TestWB extends JFrame {
+	
 
 	/**
 	 * Launch the application.
@@ -31,7 +32,10 @@ public class TestWB extends JFrame {
 	 */
 	public TestWB() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 265, 316);
+		setBounds(100, 100, 215, 255);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		getContentPane().add(lblNewLabel, BorderLayout.NORTH);
 	}
 
 }
