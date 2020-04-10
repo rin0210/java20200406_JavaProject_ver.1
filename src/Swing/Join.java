@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -17,6 +19,8 @@ import Client.CConnect;
 
 public class Join extends JFrame {
 	private CConnect cc = null;
+	private HMain hm = null;
+
 	private boolean idChk = false;
 	private String[] membership = new String[5];
 
@@ -25,10 +29,12 @@ public class Join extends JFrame {
 	private JLabel allCheckLabel = new JLabel(); // 전체 입력사항 체크
 	private JTextField txtId, txtPwd, txtName, txtTel1, txtTel2, txtTel3, txtAddr;
 	private JLabel hipen1, hipen2;
+	private JButton checkBtn, applyBtn, outBtn;
 
 	public Join(CConnect cc) {
 		super("회원가입");
 		this.cc = cc;
+		hm = HMain.getInstance();
 		this.setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 350, 440);
 		setLocationRelativeTo(null); // 프레임창이 바탕화면 한가운데 띄워짐
@@ -99,6 +105,42 @@ public class Join extends JFrame {
 		hipen1.setBounds(150, 220, 20, 20);
 		hipen2.setBounds(210, 220, 20, 20);
 		txtAddr.setBounds(100, 260, 210, 20);
+		
+		txtId.addKeyListener(new KeyAdapter(){ // 아이디 글자수 제한
+			public void keyTyped(KeyEvent k) {
+				JTextField src = (JTextField) k.getSource();
+				if(src.getText().length()>=15) {
+					k.consume();
+				}
+			}
+		});
+		
+		txtTel1.addKeyListener(new KeyAdapter(){ // 전화번호 글자수 제한
+			public void keyTyped(KeyEvent k) {
+				JTextField src = (JTextField) k.getSource();
+				if(src.getText().length()>=3) {
+					k.consume();
+				}
+			}
+		});
+		
+		txtTel2.addKeyListener(new KeyAdapter(){
+			public void keyTyped(KeyEvent k) {
+				JTextField src = (JTextField) k.getSource();
+				if(src.getText().length()>=4) {
+					k.consume();
+				}
+			}
+		});
+		
+		txtTel3.addKeyListener(new KeyAdapter(){
+			public void keyTyped(KeyEvent k) {
+				JTextField src = (JTextField) k.getSource();
+				if(src.getText().length()>=4) {
+					k.consume();
+				}
+			}
+		});
 
 		this.add(txtId);
 		this.add(txtPwd);
@@ -113,7 +155,7 @@ public class Join extends JFrame {
 
 	// 버튼 셋팅
 	private void buttonSetting() {
-		JButton checkBtn = new JButton("중복확인");
+		checkBtn = new JButton("중복확인");
 		checkBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		checkBtn.setFocusPainted(false);
 		checkBtn.setBounds(225, 100, 85, 20);
@@ -127,13 +169,12 @@ public class Join extends JFrame {
 					idCheckLabel.setText(" *아이디를 입력해주세요.");
 				} else {
 					idCheckLabel.setText("");
-					idChk = true;
 					cc.send("*id " + txtId.getText());
 				}
 			}
 		});
 
-		JButton applyBtn = new JButton("가입 신청");
+		applyBtn = new JButton("가입 신청");
 		applyBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		applyBtn.setFocusPainted(false);
 		applyBtn.setBounds(120, 330, 90, 25);
@@ -171,6 +212,7 @@ public class Join extends JFrame {
 						for (int i = 0; i < membership.length; i++) {
 							msg = msg + membership[i];
 						}
+
 						cc.send(msg);
 
 					} else {
@@ -180,15 +222,15 @@ public class Join extends JFrame {
 				}
 			}
 		});
-		
-		JButton outBtn = new JButton("< 이전");
+
+		outBtn = new JButton("< 이전");
 		outBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		outBtn.setBorderPainted(false);
 		outBtn.setContentAreaFilled(false);
 		outBtn.setFocusPainted(false);
 		outBtn.setBounds(5, 360, 70, 30);
 		this.add(outBtn);
-		
+
 		outBtn.addMouseListener(new MouseListener() { // 나가기 버튼
 
 			@Override
@@ -211,7 +253,7 @@ public class Join extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new HMain(cc);
+				hm.setVisible(true);
 				dispose();
 			}
 		});
@@ -248,13 +290,16 @@ public class Join extends JFrame {
 	public void chkMsg(String msg) {
 		if (msg.indexOf("yes") > -1) {
 			JOptionPane.showMessageDialog(null, "사용가능한 아이디입니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
+			idChk = true;
+			txtId.setEnabled(false);
+			checkBtn.setEnabled(false);
 
 		} else if (msg.indexOf("no") > -1) {
 			JOptionPane.showMessageDialog(null, "이미 존재하고 있는 아이디입니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
 
 		} else if (msg.indexOf("memberOk") > -1) {
 			JOptionPane.showMessageDialog(null, "회원등록이 완료되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
-			new HMain(cc);
+			hm.setVisible(true);
 			dispose();
 		}
 	}

@@ -17,14 +17,28 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import Client.CConnect;
+import JDBC.DAOCenter;
 
 public class HMain extends JFrame {
 	private CConnect cc = null;
 	private Join j;
 	private Login l;
 
-	public HMain(CConnect cc) {
+	// 싱글톤
+	private static HMain single = null;
+
+	public static HMain getInstance() {
+		if (single == null) {
+			single = new HMain();
+		}
+		return single;
+	}
+
+	public void admin(CConnect cc) {
 		this.cc = cc;
+	}
+
+	private HMain() {
 		this.setLayout(new BorderLayout());
 		this.setBounds(0, 0, 700, 600);
 		setLocationRelativeTo(null); // 프레임창이 바탕화면 한가운데 띄워짐
@@ -55,7 +69,7 @@ public class HMain extends JFrame {
 		loginBtn.setContentAreaFilled(false); // 버튼 영역 배경 표시 설정
 		loginBtn.setFocusPainted(false); // 포커스 표시 설정
 		loginP.add(loginBtn);
-		
+
 		loginBtn.addMouseListener(new MouseListener() { // 로그인 버튼
 
 			@Override
@@ -89,7 +103,6 @@ public class HMain extends JFrame {
 //			public void actionPerformed(ActionEvent e) {
 //				l = new Login(cc);
 //				dispose();
-//
 //			}
 //		});
 
@@ -99,7 +112,7 @@ public class HMain extends JFrame {
 		joinBtn.setContentAreaFilled(false);
 		joinBtn.setFocusPainted(false);
 		loginP.add(joinBtn);
-		
+
 		joinBtn.addMouseListener(new MouseListener() { // 회원가입 버튼
 
 			@Override
@@ -143,7 +156,7 @@ public class HMain extends JFrame {
 		nonMBtn.setFocusPainted(false);
 		loginP.add(nonMBtn);
 		nP.add(loginP, "North");
-		
+
 		nonMBtn.addMouseListener(new MouseListener() { // 비회원예약 버튼
 
 			@Override
@@ -166,8 +179,6 @@ public class HMain extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-//				new Choice(cc);
-				dispose();
 			}
 		});
 
@@ -196,16 +207,20 @@ public class HMain extends JFrame {
 	}
 
 	public void setMsg(String msg) {
-//		System.out.println("HMain왔니?");
+		System.out.println("HMain왔니?");
 		if (msg.indexOf("/join") == 0) {
 			j.chkMsg(msg);
 		} else if (msg.indexOf("/login") == 0) {
 			l.chkMsg(msg);
 		}
 	}
-
-	public static void main(String[] args) {
-//		new HMain();
+	
+	public void visible() {
+		this.setVisible(true);
 	}
+
+//	public static void main(String[] args) {
+//		new HMain();
+//	}
 
 }

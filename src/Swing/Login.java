@@ -17,7 +17,9 @@ import Client.CConnect;
 
 public class Login extends JFrame {
 	private CConnect cc = null;
-
+	private HMain hm = null;
+	private Choice ch = null;
+	
 	private JLabel idChkLabel = new JLabel(); // 아이디 체크 라벨
 	private JLabel pwdChkLabel = new JLabel(); // 비밀번호 체크 라벨
 	private JLabel labelId, labelPwd;
@@ -128,7 +130,8 @@ public class Login extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new HMain(cc);
+				hm = HMain.getInstance();
+				hm.setVisible(true);
 				dispose();
 			}
 		});
@@ -160,7 +163,7 @@ public class Login extends JFrame {
 	public void chkMsg(String msg) {
 		if (msg.indexOf("yes") > -1) { // 로그인 성공
 			JOptionPane.showMessageDialog(null, "성공적으로 로그인되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
-//			new Choice(cc);
+//			ch = new Choice(cc);
 			dispose();
 
 		} else if (msg.indexOf("no") > -1) { // 로그인 실패

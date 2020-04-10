@@ -15,9 +15,10 @@ import Client.CConnect;
 
 public class Choice extends JFrame {
 	private CConnect cc = null;
+	private Reservation rv = null;
 
 	public Choice() {
-//		this.cc = cc;
+		this.cc = cc;
 		this.setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 250, 280);
 		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
@@ -70,7 +71,8 @@ public class Choice extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new Calendar();
+				rv = new Reservation();
+				dispose();
 			}
 		});
 
@@ -109,9 +111,9 @@ public class Choice extends JFrame {
 		labelImage1.setBounds(50, 60, 35, 35);
 
 		ImageIcon hc2 = new ImageIcon("Chk1.jpg");
-		Image hm2 = hc2.getImage(); 
-		hm2 = hm2.getScaledInstance(35, 35, Image.SCALE_SMOOTH); 
-		hc2 = new ImageIcon(hm2); 
+		Image hm2 = hc2.getImage();
+		hm2 = hm2.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
+		hc2 = new ImageIcon(hm2);
 
 		JLabel labelImage2 = new JLabel(hc2);
 		labelImage2.setBounds(50, 120, 35, 35);

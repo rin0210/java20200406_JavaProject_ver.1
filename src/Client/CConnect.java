@@ -15,7 +15,8 @@ public class CConnect {
 
 	public CConnect(Socket s) {
 		this.withServer = s;
-		hm = new HMain(this);
+		hm = HMain.getInstance();
+		hm.admin(this);
 		receive();
 	}
 
@@ -53,18 +54,18 @@ public class CConnect {
 		}
 	}
 
-	public void streamSet(String id) {
-		try {
-			reMsg = withServer.getInputStream();
-			byte[] reBuffer = new byte[100];
-			reMsg.read(reBuffer);
-			id = new String(reBuffer);
-			id = id.trim();
-			this.id = id;
-			System.out.println(id + "님 정상접속되었습니다.");
-
-		} catch (Exception e) {
-		}
-	}
+//	public void streamSet(String id) {
+//		try {
+//			reMsg = withServer.getInputStream();
+//			byte[] reBuffer = new byte[100];
+//			reMsg.read(reBuffer);
+//			id = new String(reBuffer);
+//			id = id.trim();
+//			this.id = id;
+//			System.out.println(id + "님 정상접속되었습니다.");
+//
+//		} catch (Exception e) {
+//		}
+//	}
 
 }

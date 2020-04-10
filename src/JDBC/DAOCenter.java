@@ -10,9 +10,9 @@ public class DAOCenter {
 	private static DAOCenter single = null;
 
 	private DAOInterface DAOIF = null;
+	private Connection conn = null;
 //	private MDAO mda = null;
 //	private RDAO rda = null;
-	private Connection conn = null;
 
 	private ArrayList<Object> obList = null;
 
@@ -21,6 +21,13 @@ public class DAOCenter {
 		connect();
 	}
 
+	public static DAOCenter getInstance() {
+		if (single == null) {
+			single = new DAOCenter();
+		}
+		return single;
+	}
+	
 	private static void admin() {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -41,13 +48,6 @@ public class DAOCenter {
 			e.printStackTrace();
 		}
 		return cFalg;
-	}
-
-	public static DAOCenter getInstance() {
-		if (single == null) {
-			single = new DAOCenter();
-		}
-		return single;
 	}
 
 	// 전체 목록 가져오기
