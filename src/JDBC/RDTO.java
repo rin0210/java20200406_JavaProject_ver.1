@@ -5,7 +5,8 @@ public class RDTO {
 	private String room;
 	private int people;
 	private int price;
-	private int day;
+	private String chkIn;
+	private String chkOut;
 
 	public String getId() {
 		return id;
@@ -39,12 +40,20 @@ public class RDTO {
 		this.price = price;
 	}
 
-	public int getDay() {
-		return day;
+	public String getChkIn() {
+		return chkIn;
 	}
 
-	public void setDay(int day) {
-		this.day = day;
+	public void setChkIn(String chkIn) {
+		this.chkIn = chkIn;
+	}
+
+	public String getChkOut() {
+		return chkOut;
+	}
+
+	public void setChkOut(String chkOut) {
+		this.chkOut = chkOut;
 	}
 
 }

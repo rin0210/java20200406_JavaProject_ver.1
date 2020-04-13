@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import Client.CConnect;
@@ -19,19 +20,18 @@ public class Login extends JFrame {
 	private CConnect cc = null;
 	private HMain hm = null;
 	private Choice ch = null;
-	
+
 	private JLabel idChkLabel = new JLabel(); // 아이디 체크 라벨
 	private JLabel pwdChkLabel = new JLabel(); // 비밀번호 체크 라벨
 	private JLabel labelId, labelPwd;
-	private JTextField txtId, txtPwd;
+	private JTextField txtId;
 	private JButton loginBtn, outBtn;
+	private JPasswordField txtPwd;
 
 	public Login(CConnect cc) {
 		super("로그인");
 		this.cc = cc;
 		this.setLayout(null); // 배치관리자 해제
-//		this.getContentPane().setBackground(new Color(121,171,255));
-//		this.getContentPane().setBackground(new Color(61,183,204));
 		this.setBounds(0, 0, 250, 280);
 		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
 
@@ -57,10 +57,8 @@ public class Login extends JFrame {
 		this.add(labelPwd);
 
 		txtId = new JTextField();
-		txtPwd = new JTextField();
-
-//		txtId.setBorder(null); // 테두리 지우기
-//		txtPwd.setBorder(null);
+		txtPwd = new JPasswordField();
+		txtPwd.setEchoChar('*');
 
 		txtId.setBounds(100, 60, 100, 20);
 		txtPwd.setBounds(100, 100, 100, 20);
@@ -82,10 +80,16 @@ public class Login extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean chk = true;
+
+				String pwd = "";
+				char[] secret_pwd = txtPwd.getPassword(); // 패스워드 읽어와서 char[]배열에 저장
+				for (char c : secret_pwd) {
+					pwd = pwd + c;
+				}
 				if (txtId.getText().equals("")) {
 					idChkLabel.setText(" *아이디를 입력해주세요.");
 					chk = false;
-				} else if (txtPwd.getText().equals("")) {
+				} else if (pwd.equals("")) {
 					pwdChkLabel.setText(" *비밀번호를 입력해주세요.");
 					chk = false;
 				}
@@ -94,7 +98,7 @@ public class Login extends JFrame {
 					idChkLabel.setText("");
 					pwdChkLabel.setText("");
 
-					String msg = ">login " + txtId.getText() + " " + txtPwd.getText();
+					String msg = ">login " + txtId.getText() + " " + pwd;
 					cc.send(msg);
 				}
 			}
@@ -107,7 +111,7 @@ public class Login extends JFrame {
 		outBtn.setFocusPainted(false);
 		outBtn.setBounds(5, 200, 70, 30);
 		this.add(outBtn);
-		
+
 		outBtn.addMouseListener(new MouseListener() { // 나가기 버튼
 
 			@Override
@@ -163,7 +167,7 @@ public class Login extends JFrame {
 	public void chkMsg(String msg) {
 		if (msg.indexOf("yes") > -1) { // 로그인 성공
 			JOptionPane.showMessageDialog(null, "성공적으로 로그인되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
-//			ch = new Choice(cc);
+			ch = new Choice(cc);
 			dispose();
 
 		} else if (msg.indexOf("no") > -1) { // 로그인 실패

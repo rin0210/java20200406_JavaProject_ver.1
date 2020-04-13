@@ -17,7 +17,7 @@ public class Choice extends JFrame {
 	private CConnect cc = null;
 	private Reservation rv = null;
 
-	public Choice() {
+	public Choice(CConnect cc) {
 		this.cc = cc;
 		this.setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 250, 280);
@@ -71,7 +71,7 @@ public class Choice extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				rv = new Reservation();
+				rv = new Reservation(cc);
 				dispose();
 			}
 		});
@@ -122,8 +122,8 @@ public class Choice extends JFrame {
 		this.add(labelImage2);
 	}
 
-	public static void main(String[] args) {
-		new Choice();
-	}
+//	public static void main(String[] args) {
+//		new Choice();
+//	}
 
 }

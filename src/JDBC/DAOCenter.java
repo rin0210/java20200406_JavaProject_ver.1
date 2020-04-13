@@ -27,7 +27,7 @@ public class DAOCenter {
 		}
 		return single;
 	}
-	
+
 	private static void admin() {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -55,6 +55,11 @@ public class DAOCenter {
 		if (s.equals("member")) { // 회원목록
 			if (connect()) {
 				DAOIF = new MDAO(conn);
+				obList = DAOIF.getList();
+			}
+		} else if (s.equals("room")) {
+			if (connect()) {
+				DAOIF = new RDAO(conn);
 				obList = DAOIF.getList();
 			}
 		}

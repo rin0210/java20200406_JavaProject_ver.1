@@ -10,6 +10,7 @@ public interface DAOInterface {
 
 	boolean insert(Object o);
 	
+	// 전체 목록 가져오기
 	public ArrayList<Object> getList();
 
 }

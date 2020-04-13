@@ -7,25 +7,43 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import Client.CConnect;
+
 public class Reservation extends JFrame {
-	private JLabel mainLabel, chkInLable, chkOutLabel, dayLabel, adultLabel, kidLabel;
+	private JLabel mainLabel, chkInLable, chkOutLabel, dayLabel, adultLabel, kidLabel, numLabel, numLabel_1;
 	private JTextField textField, textField_1, textField_2;
 	private JButton button, button_1, button_2, button_3;
-	private JComboBox comboBox, comboBox_1;
-	private CalendarData cd = null;
+	private JComboBox<String> comboBox, comboBox_1;
 
-	public Reservation() {
+	private Calendar calIn = Calendar.getInstance();
+	private Calendar calOut = Calendar.getInstance();
+
+	private CConnect cc = null;
+	private CalendarData cd = null;
+	private Room r = null;
+
+	private String chkInDay = null;
+	private String chkOutDay = null;
+	private String adultCombo = null;
+	private String kidCombo = null;
+
+	public Reservation(CConnect cc) {
 		super("객실예약");
+		this.cc = cc;
+
 		getContentPane().setLayout(null); // 배치관리자 해제
-		this.setBounds(0, 0, 620, 370);
+		this.setBounds(0, 0, 635, 370);
 		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
 
 		labelSetting();
@@ -42,7 +60,7 @@ public class Reservation extends JFrame {
 		mainLabel = new JLabel("날짜 · 인원 선택");
 		mainLabel.setFont(new Font("돋움", Font.BOLD, 24));
 		mainLabel.setHorizontalAlignment(JLabel.CENTER);
-		mainLabel.setBounds(130, 36, 344, 37);
+		mainLabel.setBounds(133, 36, 344, 37);
 		this.add(mainLabel);
 
 		chkInLable = new JLabel("체크인 날짜");
@@ -57,20 +75,32 @@ public class Reservation extends JFrame {
 		chkOutLabel.setBounds(199, 109, 90, 27);
 		this.add(chkOutLabel);
 
+		adultLabel = new JLabel("성인");
+		adultLabel.setFont(new Font("돋움", Font.PLAIN, 13));
+		adultLabel.setHorizontalAlignment(JLabel.CENTER);
+		adultLabel.setBounds(423, 109, 55, 27);
+		this.add(adultLabel);
+
+		kidLabel = new JLabel("아동");
+		kidLabel.setFont(new Font("돋움", Font.PLAIN, 13));
+		kidLabel.setHorizontalAlignment(JLabel.CENTER);
+		kidLabel.setBounds(516, 109, 55, 27);
+		this.add(kidLabel);
+
 		dayLabel = new JLabel("박");
 		dayLabel.setFont(new Font("돋움", Font.PLAIN, 13));
 		dayLabel.setBounds(390, 141, 37, 37);
 		this.add(dayLabel);
 
-		adultLabel = new JLabel("명");
-		adultLabel.setFont(new Font("돋움", Font.PLAIN, 13));
-		adultLabel.setBounds(465, 141, 37, 37);
-		this.add(adultLabel);
+		numLabel = new JLabel("명");
+		numLabel.setFont(new Font("돋움", Font.PLAIN, 13));
+		numLabel.setBounds(483, 141, 37, 37);
+		this.add(numLabel);
 
-		kidLabel = new JLabel("명");
-		kidLabel.setFont(new Font("돋움", Font.PLAIN, 13));
-		kidLabel.setBounds(540, 141, 37, 37);
-		this.add(kidLabel);
+		numLabel_1 = new JLabel("명");
+		numLabel_1.setFont(new Font("돋움", Font.PLAIN, 13));
+		numLabel_1.setBounds(576, 141, 37, 37);
+		this.add(numLabel_1);
 	}
 
 	// 텍스트필드 셋팅
@@ -84,13 +114,13 @@ public class Reservation extends JFrame {
 		textField_1 = new JTextField(); // 체크아웃
 		textField_1.setBounds(190, 141, 146, 37);
 		textField_1.setHorizontalAlignment(JTextField.CENTER);
-		textField.setEnabled(false); // 사용자가 임의로 수정 불가하게 만듦
+		textField_1.setEnabled(false); // 사용자가 임의로 수정 불가하게 만듦
 		this.add(textField_1);
 
 		textField_2 = new JTextField(); // 박
 		textField_2.setBounds(348, 141, 37, 37);
 		textField_2.setHorizontalAlignment(JTextField.CENTER);
-		textField.setEnabled(false); // 사용자가 임의로 수정 불가하게 만듦
+		textField_2.setEnabled(false); // 사용자가 임의로 수정 불가하게 만듦
 		this.add(textField_2);
 
 	}
@@ -143,8 +173,29 @@ public class Reservation extends JFrame {
 		button_2 = new JButton("검색");
 		button_2.setFont(new Font("돋움", Font.PLAIN, 14));
 		button_2.setHorizontalAlignment(JButton.CENTER);
+		button_1.setFocusPainted(false);
 		button_2.setBounds(232, 218, 146, 37);
 		this.add(button_2);
+
+		button_2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (textField.getText().equals("") || textField_1.getText().equals("")
+						|| textField_2.getText().equals("") || comboBox.getSelectedIndex() == 0) {
+					JOptionPane.showMessageDialog(null, "입력사항을 모두 선택해주세요.", "Message", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					adultCombo = comboBox.getSelectedItem().toString(); // 콤보박스에서 데이터값 가져오기
+					kidCombo = comboBox_1.getSelectedItem().toString();
+//					System.out.println(adultCombo);
+//					System.out.println(kidCombo);
+					String msg = "^Reserve " + chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
+					System.out.println(msg);
+					cc.send(msg);
+					dispose();
+				}
+			}
+		});
 
 		button_3 = new JButton("< 이전");
 		button_3.setFont(new Font("돋움", Font.PLAIN, 12));
@@ -176,42 +227,75 @@ public class Reservation extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-//				new Choice(cc);
+				new Choice(cc);
 				dispose();
 			}
 		});
-
 	}
 
 	// 콤보박스 셋팅
 	private void comboSetting() {
-		comboBox = new JComboBox();
-		comboBox.setBounds(423, 141, 37, 35);
+		String[] combo = new String[31];
+		for (int i = 0; i <= 30; i++) {
+			combo[i] = String.valueOf(i);
+		}
+
+		comboBox = new JComboBox<>(combo);
+		comboBox.setBounds(423, 141, 55, 35);
 		this.add(comboBox);
 
-		comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(498, 141, 37, 35);
+		comboBox_1 = new JComboBox<>(combo);
+		comboBox_1.setBounds(516, 141, 55, 35);
 		this.add(comboBox_1);
 
 	}
 
+	// 달력 열기
 	private void lookCalendar(String s) {
 		cd = new CalendarData(this, s);
 	}
 
-	public void chkInDay(String b, String s, String a) { // b:전체날짜, s:in/out구분, a:day
-		String in, out;
+	// 선택한 날짜 셋팅
+	public void chkInOutDay(String b, String s, int y, int m, int d) { // b:전체날짜, s:in/out구분
+		System.out.println(y + "/" + m + "/" + d);
 		if (s.equals("In")) {
 			textField.setText(b);
-			in = a;
+			calIn.set(y, m, d);
+
+			String strFormat = "yyyy-MM-dd"; // cConnect로 넘겨주기위해서 String으로 형변환시킴
+			SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
+			chkInDay = sdf.format(calIn.getTime());
+			System.out.println(chkInDay);
+
 		} else if (s.equals("Out")) {
 			textField_1.setText(b);
-			out = a;
-		} // 이렇게 하면 안돼..day만으로 구하면 달이 넘어가면 망함
+			calOut.set(y, m, d);
+
+			String strFormat = "yyyy-MM-dd";
+			SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
+			chkOutDay = sdf.format(calOut.getTime());
+			System.out.println(chkOutDay);
+		}
+
+		if (!textField.getText().equals("") && !textField_1.getText().equals("")) { // 체크인아웃 날짜를 모두 선택하면
+			int compare = calIn.compareTo(calOut); // 체크인아웃 날짜 비교하는 변수
+			if (compare < 0) {
+				long diffSec = (calOut.getTimeInMillis() - calIn.getTimeInMillis()) / 1000; // 두 날짜간의 차이를 1000으로 나누어
+																							// 초단위로 변환
+				long diffDay = diffSec / (24 * 60 * 60); // 1일은 24(시간)*60(분)*60(초)이므로 이를 나누면 일로 변환됨
+				String night = String.valueOf(diffDay);
+				textField_2.setText(night);
+			} else {
+				JOptionPane.showMessageDialog(null, "날짜를 다시 확인해주세요.", "Message", JOptionPane.INFORMATION_MESSAGE);
+				textField.setText("");
+				textField_1.setText("");
+				textField_2.setText("");
+			}
+		}
 	}
 
-	public static void main(String[] args) {
-		new Reservation();
-	}
+//	public static void main(String[] args) {
+//		new Reservation(cc);
+//	}
 
 }
