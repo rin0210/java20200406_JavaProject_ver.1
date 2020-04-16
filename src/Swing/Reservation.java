@@ -31,7 +31,7 @@ public class Reservation extends JFrame {
 
 	private CConnect cc = null;
 	private CalendarData cd = null;
-	private Room r = null;
+	private CompareDate cpd = null;
 
 	private String chkInDay = null;
 	private String chkOutDay = null;
@@ -173,7 +173,7 @@ public class Reservation extends JFrame {
 		button_2 = new JButton("검색");
 		button_2.setFont(new Font("돋움", Font.PLAIN, 14));
 		button_2.setHorizontalAlignment(JButton.CENTER);
-		button_1.setFocusPainted(false);
+		button_2.setFocusPainted(false);
 		button_2.setBounds(232, 218, 146, 37);
 		this.add(button_2);
 
@@ -187,11 +187,11 @@ public class Reservation extends JFrame {
 				} else {
 					adultCombo = comboBox.getSelectedItem().toString(); // 콤보박스에서 데이터값 가져오기
 					kidCombo = comboBox_1.getSelectedItem().toString();
-//					System.out.println(adultCombo);
-//					System.out.println(kidCombo);
-					String msg = "^Reserve " + chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
-					System.out.println(msg);
-					cc.send(msg);
+
+					String info = chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
+					System.out.println(info);
+
+					cpd = new CompareDate(cc, info);
 					dispose();
 				}
 			}

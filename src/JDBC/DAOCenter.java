@@ -56,13 +56,26 @@ public class DAOCenter {
 			if (connect()) {
 				DAOIF = new MDAO(conn);
 				obList = DAOIF.getList();
+			} else {
+				System.out.println("DB 접속 오류..!");
+				System.exit(0);
 			}
-		} else if (s.equals("room")) {
+		} else if (s.equals("room")) { // 방목록
 			if (connect()) {
 				DAOIF = new RDAO(conn);
 				obList = DAOIF.getList();
+			} else {
+				System.out.println("DB 접속 오류..!");
+				System.exit(0);
 			}
-		}
+		} else if (s.equals("booking")) // 예약목록
+			if (connect()) {
+				DAOIF = new BDAO(conn);
+				obList = DAOIF.getList();
+			} else {
+				System.out.println("DB 접속 오류..!");
+				System.exit(0);
+			}
 		return obList;
 	}
 
@@ -71,6 +84,14 @@ public class DAOCenter {
 		if (s.equals("member")) { // 회원등록
 			if (connect()) {
 				DAOIF = new MDAO(conn);
+				DAOIF.insert(ob);
+			} else {
+				System.out.println("DB 접속 오류..!");
+				System.exit(0);
+			}
+		} else if (s.equals("booking")) { // 예약등록
+			if (connect()) {
+				DAOIF = new BDAO(conn);
 				DAOIF.insert(ob);
 			} else {
 				System.out.println("DB 접속 오류..!");
@@ -86,7 +107,6 @@ public class DAOCenter {
 			if (DAOIF.idCheck(id) == false) { // 중복 아이디가 있다면
 				return false;
 			}
-
 		} else {
 			System.out.println("DB 접속 오류..!");
 			System.exit(0);

@@ -206,21 +206,16 @@ public class HMain extends JFrame {
 		this.add(cP, "Center");
 	}
 
-	public void setMsg(String msg) {
-		System.out.println("HMain¿Ô´Ï?");
-		if (msg.indexOf("/join") == 0) {
-			j.chkMsg(msg);
-		} else if (msg.indexOf("/login") == 0) {
-			l.chkMsg(msg);
-		}
-	}
-	
+//	public void setMsg(String msg) {
+//		if (msg.indexOf("/join") == 0) {
+//			j.chkMsg(msg);
+//		} else if (msg.indexOf("/login") == 0) {
+//			l.chkMsg(msg);
+//		}
+//	}
+
 	public void visible() {
 		this.setVisible(true);
 	}
-
-//	public static void main(String[] args) {
-//		new HMain();
-//	}
 
 }

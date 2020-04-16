@@ -170,6 +170,7 @@ public class Join extends JFrame {
 				} else {
 					idCheckLabel.setText("");
 					cc.send("*id " + txtId.getText());
+					chkMsg();
 				}
 			}
 		});
@@ -214,6 +215,7 @@ public class Join extends JFrame {
 						}
 
 						cc.send(msg);
+						chkMsg();
 
 					} else {
 						JOptionPane.showMessageDialog(null, "아이디 중복을 확인해주세요.", "Message",
@@ -287,14 +289,15 @@ public class Join extends JFrame {
 	}
 
 	// 알림 메시지 팝업
-	public void chkMsg(String msg) {
-		if (msg.indexOf("yes") > -1) {
+	public void chkMsg() {
+		String msg = cc.receive();
+		if (msg.indexOf("idYes") > -1) {
 			JOptionPane.showMessageDialog(null, "사용가능한 아이디입니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
 			idChk = true;
 			txtId.setEnabled(false);
 			checkBtn.setEnabled(false);
 
-		} else if (msg.indexOf("no") > -1) {
+		} else if (msg.indexOf("idNo") > -1) {
 			JOptionPane.showMessageDialog(null, "이미 존재하고 있는 아이디입니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
 
 		} else if (msg.indexOf("memberOk") > -1) {

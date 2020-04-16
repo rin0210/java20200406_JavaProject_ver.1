@@ -100,6 +100,7 @@ public class Login extends JFrame {
 
 					String msg = ">login " + txtId.getText() + " " + pwd;
 					cc.send(msg);
+					chkMsg();
 				}
 			}
 		});
@@ -164,13 +165,14 @@ public class Login extends JFrame {
 	}
 
 	// 아이디 비밀번호 체크 메세지
-	public void chkMsg(String msg) {
-		if (msg.indexOf("yes") > -1) { // 로그인 성공
+	public void chkMsg() {
+		String msg = cc.receive();
+		if (msg.indexOf("loginYes") > -1) { // 로그인 성공
 			JOptionPane.showMessageDialog(null, "성공적으로 로그인되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
 			ch = new Choice(cc);
 			dispose();
 
-		} else if (msg.indexOf("no") > -1) { // 로그인 실패
+		} else if (msg.indexOf("loginNo") > -1) { // 로그인 실패
 			JOptionPane.showMessageDialog(null, "아이디나 비밀번호를 다시 확인해주세요.", "Message", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

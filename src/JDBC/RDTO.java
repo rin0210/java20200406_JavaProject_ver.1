@@ -1,20 +1,11 @@
 package JDBC;
 
-public class RDTO {
-	private String id;
+import java.io.Serializable;
+
+public class RDTO implements Serializable {
 	private String room;
 	private int people;
 	private int price;
-	private String chkIn;
-	private String chkOut;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getRoom() {
 		return room;
@@ -40,20 +31,13 @@ public class RDTO {
 		this.price = price;
 	}
 
-	public String getChkIn() {
-		return chkIn;
-	}
+	public String[] getArray() {
+		String[] data = new String[3];
+		data[0] = this.room;
+		data[1] = String.valueOf(this.people);
+		data[2] = String.valueOf(this.price);
 
-	public void setChkIn(String chkIn) {
-		this.chkIn = chkIn;
-	}
-
-	public String getChkOut() {
-		return chkOut;
-	}
-
-	public void setChkOut(String chkOut) {
-		this.chkOut = chkOut;
+		return data;
 	}
 
 }
