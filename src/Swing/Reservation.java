@@ -21,7 +21,8 @@ import javax.swing.JTextField;
 import Client.CConnect;
 
 public class Reservation extends JFrame {
-	private JLabel mainLabel, chkInLable, chkOutLabel, dayLabel, adultLabel, kidLabel, numLabel, numLabel_1;
+	private JLabel mainLabel, chkInLable, chkOutLabel, dayLabel, adultLabel, kidLabel, numLabel, numLabel_1,
+			peopleChkLabel;
 	private JTextField textField, textField_1, textField_2;
 	private JButton button, button_1, button_2, button_3;
 	private JComboBox<String> comboBox, comboBox_1;
@@ -101,6 +102,14 @@ public class Reservation extends JFrame {
 		numLabel_1.setFont(new Font("돋움", Font.PLAIN, 13));
 		numLabel_1.setBounds(576, 141, 37, 37);
 		this.add(numLabel_1);
+
+		peopleChkLabel = new JLabel(" *예약 인원은 성인과 아동의 수를 모두 합하여 최대 5명까지 예약가능합니다.");
+		peopleChkLabel.setFont(new Font("돋움", Font.PLAIN, 12));
+		peopleChkLabel.setHorizontalAlignment(JTextField.RIGHT);
+		peopleChkLabel.setForeground(Color.BLUE);
+		peopleChkLabel.setBounds(156, 290, 438, 30);
+		getContentPane().add(peopleChkLabel);
+
 	}
 
 	// 텍스트필드 셋팅
@@ -188,11 +197,18 @@ public class Reservation extends JFrame {
 					adultCombo = comboBox.getSelectedItem().toString(); // 콤보박스에서 데이터값 가져오기
 					kidCombo = comboBox_1.getSelectedItem().toString();
 
-					String info = chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
-					System.out.println(info);
+					int people = Integer.valueOf(adultCombo) + Integer.valueOf(kidCombo); // 전체인원:성인+아동
+					if (people > 5) {
+						peopleChkLabel.setForeground(Color.RED);
 
-					cpd = new CompareDate(cc, info);
-					dispose();
+					} else {
+						String info = chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
+						System.out.println(info);
+
+						cpd = new CompareDate(cc, info);
+						dispose();
+					}
+
 				}
 			}
 		});
@@ -235,8 +251,8 @@ public class Reservation extends JFrame {
 
 	// 콤보박스 셋팅
 	private void comboSetting() {
-		String[] combo = new String[31];
-		for (int i = 0; i <= 30; i++) {
+		String[] combo = new String[6];
+		for (int i = 0; i <= 5; i++) {
 			combo[i] = String.valueOf(i);
 		}
 

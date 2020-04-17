@@ -113,23 +113,16 @@ public class CalendarData extends JFrame implements ActionListener {
 		System.out.println("month: " + month);
 
 		// 오늘 이전 날짜 버튼 비활성화
-		if (month == thisMonth) {
+		if (month == thisMonth && year <= thisYear) {
 			for (int i = calendar.getMinimum(Calendar.DAY_OF_MONTH); i < day; i++) {
-				calBtn[i + beforeDay - 1].setForeground(Color.GRAY);
 				calBtn[i + beforeDay - 1].setEnabled(false);
-				if (year > thisYear) {
-					calBtn[i + beforeDay - 1].setForeground(Color.BLACK);
-					calBtn[i + beforeDay - 1].setEnabled(true);
-				}
 			}
 		}
 		for (int i = calendar.getMinimum(Calendar.DAY_OF_MONTH); i <= calendar
 				.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
 			if ((month < thisMonth && year == thisYear)) {
-				calBtn[i + beforeDay - 1].setForeground(Color.GRAY);
 				calBtn[i + beforeDay - 1].setEnabled(false);
 			} else if (year < thisYear) {
-				calBtn[i + beforeDay - 1].setForeground(Color.GRAY);
 				calBtn[i + beforeDay - 1].setEnabled(false);
 			}
 		} // 여기까지

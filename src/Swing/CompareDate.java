@@ -150,44 +150,23 @@ public class CompareDate {
 	// DB로부터 예약목록 가져와서 방 체크하기
 	private void reserveChk() {
 
-		int people = Integer.valueOf(adult) + Integer.valueOf(kid); // 전체인원:성인+아동
-
-		for (RDTO r : getRoomList) {
-			if (people <= r.getPeople()) { // 인원 수 체크하고
-				if (getBookingList.size() == 0) { // 호텔 방 중에 예약한 방이 하나도 없으면
-					addList(r);
-				} else {
-					System.out.println(getBookingList.get(0).getRoom());
-					System.out.println("어...어떻게 해야하지??");
-//					compareRoom(r);
-//					for (BDTO b : getBookingList) {
-//						System.out.println("r: "+r.getRoom());
-//						System.out.println("b: "+b.getRoom());
-//						if (r.getRoom().equals(b.getRoom())) {
-//							chkDays("already", b.getChkIn(), b.getChkOut(), r); // 날짜체크할꺼야
-//						} else {
-//							addList(r);
-//						}
-//					}
+		if (getBookingList.size() == 0) { // 호텔 방 중에 예약한 방이 하나도 없으면
+			for (RDTO r : getRoomList) {
+				addList(r);
+			}
+		} else {
+			for (RDTO r : getRoomList) {
+				for (BDTO b : getBookingList) {
+					if (r.getRoom().equals(b.getRoom())) {
+						chkDays("already", b.getChkIn(), b.getChkOut(), r); // 날짜체크할꺼야
+					} else {
+						addList(r);
+					}
 				}
-//				}
 			}
 		}
-//	}
 		reserveGo();
 	}
-
-//	private void compareRoom(RDTO r) {
-//		for (int i = 0; i < getRoomList.size(); i++) {
-//			for (int j = 0; j < getBookingList.size(); i++) {
-//				if (getRoomList.get(i).getRoom().equals(getBookingList.get(j).getRoom())) {
-//					chkDays("already", getBookingList.get(j).getChkIn(), getBookingList.get(j).getChkOut(), r);
-//				} else {
-//					addList(r);
-//				}
-//			}
-//		}
-//	}
 
 	// 방 목록에 담기
 	private void addList(RDTO r) {
@@ -196,8 +175,7 @@ public class CompareDate {
 	}
 
 	private void reserveGo() {
-		r = new Room(cc, myRoomList);
-
+//		r = new Room(cc, myRoomList);
 	}
 
 }

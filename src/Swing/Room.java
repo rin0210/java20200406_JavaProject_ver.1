@@ -2,16 +2,15 @@ package Swing;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,10 +22,9 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 
 import Client.CConnect;
-import JDBC.RDTO;
 
 public class Room extends JFrame {
-	private String header[] = { "객실유형", "정원", "요금", "상세보기" };
+	private String header[] = { "객실유형", "정원", "요금" };
 
 	private DefaultTableModel tableModel = new DefaultTableModel(null, header);
 	private JTable table = new JTable(tableModel);
@@ -35,6 +33,7 @@ public class Room extends JFrame {
 
 	private JPanel wholeTab = new JPanel();
 	private JPanel underTab = new JPanel();
+	private JPanel rigthTab = new JPanel();
 
 	private JButton outBtn;
 
@@ -42,21 +41,25 @@ public class Room extends JFrame {
 	private ArrayList<String[]> roomList = null;
 	private String[] in = new String[3];
 
-	public Room(CConnect cc, ArrayList<String[]> roomList) {
-		super("객실예약");
-		this.cc = cc;
-		this.roomList = roomList;
+//	public Room(CConnect cc, ArrayList<String[]> roomList) {
 
+	public Room() {
+		super("객실예약");
+//		this.cc = cc;
+//		this.roomList = roomList;
+
+		this.setLayout(null);
 		th.setPreferredSize(new Dimension(0, 50)); // 헤더 사이즈 지정
 		th.setFont(new Font("돋움", Font.PLAIN, 14));
 
-		this.setBounds(0, 0, 500, 400);
+		this.setBounds(0, 0, 700, 450);
 		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
 
 		init();
 		setting();
 		createWholeTab();
 		createUnderTab();
+		createRigthTab();
 
 		this.add(th);
 		this.add(tableScroll);
@@ -65,20 +68,37 @@ public class Room extends JFrame {
 	}
 
 	private void init() {
-		for (int i = 0; i < roomList.size(); i++) {
-			tableModel.addRow(roomList.get(i));
+		ArrayList<String[]> rList = new ArrayList<>();
+		in[0] = "1";
+		in[1] = "2";
+		in[2] = "3";
+		for (int i = 0; i < in.length; i++) {
+			rList.add(in);
+		}
+
+		if (rList != null) {
+			for (int i = 0; i < rList.size(); i++) {
+				tableModel.addRow(rList.get(i));
+			}
 		}
 	}
 
+	private void createRigthTab() {
+		JLabel lookLabel = new JLabel("상세 보기");
+		lookLabel.setFont(new Font("돋움", Font.PLAIN, 14));
+//		rigthTab.add(lookLabel);
+//		this.add(rigthTab, "Center");
+
+	}
+
 	private void createUnderTab() {
-		underTab.setLayout(new FlowLayout(FlowLayout.LEFT));
 		outBtn = new JButton("< 이전");
 		outBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		outBtn.setBorderPainted(false);
 		outBtn.setContentAreaFilled(false);
 		outBtn.setFocusPainted(false);
-		underTab.add(outBtn);
-		this.add(underTab, "South");
+		outBtn.setBounds(5, 380, 70, 30);
+		this.add(outBtn);
 
 		outBtn.addMouseListener(new MouseListener() { // 나가기 버튼
 
@@ -108,8 +128,9 @@ public class Room extends JFrame {
 	}
 
 	private void createWholeTab() {
-		wholeTab.add(tableScroll);
-		this.add(wholeTab, "Center");
+//		wholeTab.add(tableScroll);
+//		this.add(tableScroll, "West");
+		tableScroll.setBounds(0, 0, 467, 380);
 	}
 
 	private void setting() {
@@ -118,9 +139,16 @@ public class Room extends JFrame {
 		table.setShowVerticalLines(false); // 셀 사이에 세로선을 그릴지 여부
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 테이블 행을 한개만 선택할 수 있음
 
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getButton() == 1) { // 마우스 클릭시
+//					tableScroll.setBounds(0, 0, 467, 380);
+				}
+			}
+		});
+
 		DefaultTableCellRenderer ts = new DefaultTableCellRenderer(); // 셀 안에 들어가는 데이터의 정렬을 조절
 		ts.setHorizontalAlignment(SwingConstants.CENTER); // 셀에 출력될 데이터 정렬 지정
-
 		TableColumnModel tc = table.getColumnModel();
 		for (int i = 0; i < tc.getColumnCount(); i++) {
 			tc.getColumn(i).setCellRenderer(ts);
@@ -128,8 +156,8 @@ public class Room extends JFrame {
 
 	}
 
-//	public static void main(String[] args) {
-//		new Room();
-//	}
+	public static void main(String[] args) {
+		new Room();
+	}
 
 }
