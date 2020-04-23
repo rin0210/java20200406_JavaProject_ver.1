@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Client.CConnect;
@@ -21,8 +22,11 @@ import JDBC.DAOCenter;
 
 public class HMain extends JFrame {
 	private CConnect cc = null;
-	private Join j;
-	private Login l;
+	private Choice c = null;
+	private Join j = null;
+	private Login l = null;
+	private JButton loginBtn, joinBtn, nonMBtn;
+	private String id = null;
 
 	// 싱글톤
 	private static HMain single = null;
@@ -46,7 +50,7 @@ public class HMain extends JFrame {
 		createCP();
 		createNP();
 
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
 	}
 
@@ -63,7 +67,7 @@ public class HMain extends JFrame {
 		JPanel loginP = new JPanel();
 		loginP.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-		JButton loginBtn = new JButton("로그인");
+		loginBtn = new JButton("로그인");
 		loginBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		loginBtn.setBorderPainted(false); // 버튼 테두리선 설정
 		loginBtn.setContentAreaFilled(false); // 버튼 영역 배경 표시 설정
@@ -92,8 +96,13 @@ public class HMain extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				l = new Login(cc);
-				dispose();
+				if (loginBtn.getText().equals("로그인")) {
+					l = new Login(cc);
+					visible(2);
+				} else if (loginBtn.getText().equals("로그아웃")) {
+					cc.send("/logout");
+					chkMsg();
+				}
 			}
 		});
 
@@ -106,7 +115,7 @@ public class HMain extends JFrame {
 //			}
 //		});
 
-		JButton joinBtn = new JButton("회원가입");
+		joinBtn = new JButton("회원가입");
 		joinBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		joinBtn.setBorderPainted(false);
 		joinBtn.setContentAreaFilled(false);
@@ -135,8 +144,13 @@ public class HMain extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				j = new Join(cc);
-				dispose();
+				if (loginChk()) {
+					JOptionPane.showMessageDialog(null, "이미 로그인 하셨습니다.\n로그아웃 하신 후 이용해주세요.", "Message",
+							JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					j = new Join(cc);
+					visible(2);
+				}
 			}
 		});
 
@@ -149,7 +163,7 @@ public class HMain extends JFrame {
 //			}
 //		});
 
-		JButton nonMBtn = new JButton("비회원예약");
+		nonMBtn = new JButton("예약");
 		nonMBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		nonMBtn.setBorderPainted(false);
 		nonMBtn.setContentAreaFilled(false);
@@ -157,7 +171,7 @@ public class HMain extends JFrame {
 		loginP.add(nonMBtn);
 		nP.add(loginP, "North");
 
-		nonMBtn.addMouseListener(new MouseListener() { // 비회원예약 버튼
+		nonMBtn.addMouseListener(new MouseListener() { // 예약 버튼
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -179,6 +193,8 @@ public class HMain extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				c = new Choice(cc, id);
+				visible(2);
 			}
 		});
 
@@ -196,7 +212,7 @@ public class HMain extends JFrame {
 
 	private void createCP() {
 		JPanel cP = new JPanel();
-		ImageIcon hc = new ImageIcon("HMain.jpg");
+		ImageIcon hc = new ImageIcon("pic_1.png");
 		Image hm = hc.getImage(); // 이미지아이콘을 이미지로 변경
 		hm = hm.getScaledInstance(700, 460, Image.SCALE_SMOOTH); // 이미지 사이즈 조절
 		hc = new ImageIcon(hm); // 다시 이미지아이콘으로 변경
@@ -206,16 +222,36 @@ public class HMain extends JFrame {
 		this.add(cP, "Center");
 	}
 
-//	public void setMsg(String msg) {
-//		if (msg.indexOf("/join") == 0) {
-//			j.chkMsg(msg);
-//		} else if (msg.indexOf("/login") == 0) {
-//			l.chkMsg(msg);
-//		}
-//	}
+	public void setLogout() {
+		loginBtn.setText("로그아웃");
+	}
 
-	public void visible() {
-		this.setVisible(true);
+	public void chkMsg() {
+		String msg = cc.receive();
+		if (msg.indexOf("/logout") > -1) {
+			JOptionPane.showMessageDialog(null, "정상적으로 로그아웃 되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
+			loginBtn.setText("로그인");
+		}
+	}
+
+	// 로그인 여부 체크
+	public boolean loginChk() {
+		if (loginBtn.getText().equals("로그아웃")) {
+			return true; // 회원
+		}
+		return false; // 비회원
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void visible(int a) {
+		if (a == 1) {
+			this.setVisible(true);
+		} else if (a == 2) {
+			this.setVisible(false);
+		}
 	}
 
 }

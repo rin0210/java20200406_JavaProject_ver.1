@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -20,14 +21,27 @@ public class SConnect extends Thread {
 	private OutputStream sendMsg_1 = null;
 	private String id = null;
 	private ServerCenter sc = null;
+	private ServerSocket serverS_1 = null;
 
-	SConnect(Socket c, Socket c_1) {
+	SConnect(Socket c, ServerSocket serverS_1, int S_1Port, ServerCenter sc) {
 		this.withClient = c;
-		this.withClient_1 = c_1;
+		this.serverS_1 = serverS_1;
+		sendPort(String.valueOf(S_1Port));
+		this.sc = sc;
 	}
 
-	public void admin(ServerCenter sc) {
-		this.sc = sc;
+	public void sendPort(String S_1Port) {
+		System.out.println("S_1Port: " + S_1Port);
+		
+		try {
+			sendMsg = withClient.getOutputStream();
+			sendMsg.write(S_1Port.getBytes());
+			withClient_1 = serverS_1.accept();
+			System.out.println("withClient_1 Á¢¼ÓµÊ");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -51,7 +65,7 @@ public class SConnect extends Thread {
 						msg = msg.trim();
 
 						System.out.println(msg);
-						sc.receive(withClient, msg);
+						sc.receive(withClient, msg, id);
 					}
 
 				} catch (Exception e) {
@@ -59,10 +73,10 @@ public class SConnect extends Thread {
 				}
 			}
 		}).start();
-
 	}
 
 	public void send(Socket wc, String msg) {
+		System.out.println("SConnect send msg: " + msg);
 		try {
 			if (this.withClient.equals(wc)) {
 				sendMsg = withClient.getOutputStream();
@@ -74,20 +88,20 @@ public class SConnect extends Thread {
 		}
 	}
 
-	public void sendObject(Socket wc, Object olist) {
+	public void sendObject(Socket wc, Object o) {
 		try {
 			if (this.withClient.equals(wc)) {
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				ObjectOutputStream os = new ObjectOutputStream(bos);
 
-				os.writeObject(olist);
+				os.writeObject(o);
 
 				byte[] reBuffer = bos.toByteArray();
 
 				sendMsg_1 = withClient_1.getOutputStream();
 				sendMsg_1.write(reBuffer);
 
-				System.out.println("sendMsg: " + olist);
+				System.out.println("sendMsg: " + o);
 			}
 
 		} catch (Exception e) {
@@ -98,6 +112,7 @@ public class SConnect extends Thread {
 	public void streamSet(Socket wc, String id) {
 		this.id = id;
 		System.out.println(id + "´Ô ·Î±×ÀÎ");
+
 		try {
 			if (this.withClient.equals(wc)) {
 				sendMsg = withClient.getOutputStream();
@@ -109,4 +124,19 @@ public class SConnect extends Thread {
 		}
 	}
 
+	public void logout(Socket wc, String msg) {
+		this.id = null;
+		System.out.println(id + "´Ô ·Î±×¾Æ¿ô");
+
+		try {
+			if (this.withClient.equals(wc)) {
+				sendMsg = withClient.getOutputStream();
+				sendMsg.write(msg.getBytes());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

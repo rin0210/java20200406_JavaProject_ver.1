@@ -11,34 +11,49 @@ import JDBC.RDTO;
 
 public class CompareDate {
 	private CConnect cc = null;
+	private Reservation rv = null;
+	private Room r = null;
+	
 	private String info = null;
+	private Object o = null;
 	private ArrayList<Object> getObjList = null;
 	private ArrayList<RDTO> getRoomList = new ArrayList<>();
 	private ArrayList<BDTO> getBookingList = new ArrayList<>();
 	private RDTO rt = null;
 	private BDTO bt = null;
+	
 	private String chkIn = null;
 	private String chkOut = null;
 	private String adult = null;
 	private String kid = null;
+	private String night = null;
+	private String chk = null;
+	
 	private ArrayList<String> myDaysList = new ArrayList<>();
 	private ArrayList<String[]> myRoomList = new ArrayList<>();
-	private Room r = null;
+	private ArrayList<String> overlapList = new ArrayList<>(); // 중복된 방 목록
+	private String[] mine = null; /////
 
-	public CompareDate(CConnect cc, String info) {
+	public CompareDate(CConnect cc, Reservation rv, String chk, String info, String night, String[] mine) { ///////
 		this.cc = cc;
+		this.rv = rv;
+		this.chk = chk;
 		this.info = info;
+		this.night = night;
+		this.mine = mine; /////
 //		this.getObjList = cc.receiveObject();
 
-		typeConversion();
+		getList();
 		myReserve();
 	}
 
 	// DB에서 방,예약 목록 가져오기
-	private void typeConversion() {
-		String msg = "^callRoom";
+	private void getList() {
+		String msg = "/callRoom";
 		cc.send(msg);
-		getObjList = cc.receiveObject();
+		o = cc.receiveObject();
+		getObjList = (ArrayList<Object>) o;
+//		getObjList = cc.receiveObject();
 
 		for (Object o : getObjList) {
 			rt = (RDTO) o;
@@ -46,9 +61,10 @@ public class CompareDate {
 		}
 		System.out.println("방목록 가져왔니? " + getRoomList.size());
 
-		msg = "^callBooking";
+		msg = "/callBooking";
 		cc.send(msg);
-		getObjList = cc.receiveObject();
+		o = cc.receiveObject();
+		getObjList = (ArrayList<Object>) o;
 
 		for (Object o : getObjList) {
 			bt = (BDTO) o;
@@ -128,39 +144,39 @@ public class CompareDate {
 
 	// 날짜 비교
 	private void compareDate(ArrayList<String> alreadyList, RDTO r) {
+		System.out.println("alreadyList 사이즈? "+alreadyList.size());
+		System.out.println("myDaysList 사이즈? "+myDaysList.size());
 		if (alreadyList.size() >= myDaysList.size()) {
-			for (int i = 0; i < alreadyList.size(); i++) {
+			for (int i = 0; i < myDaysList.size(); i++) {
 				if (alreadyList.contains(myDaysList.get(i))) { // 날짜가 중복되면
+					overlapList.add(r.getRoom());
 					break;
 				} else {
-					addList(r);
 				}
 			}
 		} else {
-			for (int i = 0; i < myDaysList.size(); i++) {
+			for (int i = 0; i < alreadyList.size(); i++) {
 				if (myDaysList.contains(alreadyList.get(i))) { // 날짜가 중복되면
+					overlapList.add(r.getRoom());
 					break;
 				} else {
-					addList(r);
 				}
 			}
 		}
 	}
 
-	// DB로부터 예약목록 가져와서 방 체크하기
+	// 예약목록 있는지 체크하기
 	private void reserveChk() {
 
-		if (getBookingList.size() == 0) { // 호텔 방 중에 예약한 방이 하나도 없으면
-			for (RDTO r : getRoomList) {
-				addList(r);
-			}
-		} else {
+		if (getBookingList.size() >= 1) { // 호텔 방 중에 예약한 방이 하나라도 있으면
+			
 			for (RDTO r : getRoomList) {
 				for (BDTO b : getBookingList) {
 					if (r.getRoom().equals(b.getRoom())) {
 						chkDays("already", b.getChkIn(), b.getChkOut(), r); // 날짜체크할꺼야
+						break;
 					} else {
-						addList(r);
+
 					}
 				}
 			}
@@ -168,14 +184,22 @@ public class CompareDate {
 		reserveGo();
 	}
 
-	// 방 목록에 담기
-	private void addList(RDTO r) {
-		myRoomList.add(r.getArray());
-		System.out.println("myroomList: " + myRoomList);
-	}
-
 	private void reserveGo() {
-//		r = new Room(cc, myRoomList);
+		System.out.println("중복날짜 방목록 :" + overlapList);
+		
+		for (int i = 0; i < getRoomList.size(); i++) {
+			for (int j = 0; j < overlapList.size(); j++) {
+				if (getRoomList.get(i).getRoom().equals(overlapList.get(j))) {
+					getRoomList.remove(i);
+				}
+			}
+		}
+		for (RDTO r : getRoomList) {
+			myRoomList.add(r.getArray());
+		}
+
+		System.out.println("내가 띄울 방목록 몇개? " + myRoomList.size());
+		r = new Room(cc, rv, chk, myRoomList, night, mine); 
 	}
 
 }

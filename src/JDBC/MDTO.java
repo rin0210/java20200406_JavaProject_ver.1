@@ -65,4 +65,14 @@ public class MDTO {
 		this.lev = lev;
 	}
 
+	public String[] getArray() {
+		String[] data = new String[4];
+		data[0] = this.id;
+		data[1] = this.name;
+		data[2] = this.tel;
+		data[3] = this.addr;
+
+		return data;
+	}
+
 }

@@ -31,6 +31,8 @@ public class Login extends JFrame {
 	public Login(CConnect cc) {
 		super("로그인");
 		this.cc = cc;
+		hm = HMain.getInstance();
+
 		this.setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 250, 280);
 		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
@@ -98,7 +100,7 @@ public class Login extends JFrame {
 					idChkLabel.setText("");
 					pwdChkLabel.setText("");
 
-					String msg = ">login " + txtId.getText() + " " + pwd;
+					String msg = "/login " + txtId.getText() + " " + pwd;
 					cc.send(msg);
 					chkMsg();
 				}
@@ -135,8 +137,7 @@ public class Login extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				hm = HMain.getInstance();
-				hm.setVisible(true);
+				hm.visible(1);
 				dispose();
 			}
 		});
@@ -168,8 +169,11 @@ public class Login extends JFrame {
 	public void chkMsg() {
 		String msg = cc.receive();
 		if (msg.indexOf("loginYes") > -1) { // 로그인 성공
-			JOptionPane.showMessageDialog(null, "성공적으로 로그인되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
-			ch = new Choice(cc);
+			JOptionPane.showMessageDialog(null, "성공적으로 로그인 되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
+			String id = cc.receive();
+			hm.setId(id);
+			hm.setLogout();
+			hm.visible(1);
 			dispose();
 
 		} else if (msg.indexOf("loginNo") > -1) { // 로그인 실패

@@ -35,24 +35,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.Icon;
+import javax.swing.UIManager;
 
 public class TestWB extends JFrame {
-	private String header[] = { "객실유형", "정원", "요금" };
-
-	private DefaultTableModel tableModel = new DefaultTableModel(null, header);
-	private JTable table = new JTable(tableModel);
-	private JTableHeader th = table.getTableHeader();
-	private JScrollPane tableScroll = new JScrollPane(table);
-
-	private JPanel wholeTab = new JPanel();
-	private JPanel underTab = new JPanel();
-	private JPanel rigthTab = new JPanel();
-
-	private JButton outBtn;
-
-	private CConnect cc = null;
-	private ArrayList<String[]> roomList = null;
-	private String[] in = new String[3];
 
 	/**
 	 * Launch the application.
@@ -74,6 +61,44 @@ public class TestWB extends JFrame {
 	 * Create the frame.
 	 */
 	public TestWB() {
+//		super("예약확인");
+
+		getContentPane().setLayout(null); // 배치관리자 해제
 		
+		JList list = new JList();
+		list.setBounds(0, 0, 324, 74);
+		getContentPane().add(list);
+		
+		JLabel lblNewLabel = new JLabel("\uC608\uC57D\uBC88\uD638");
+		lblNewLabel.setBounds(25, 100, 85, 25);
+		getContentPane().add(lblNewLabel);
+		
+		JLabel label = new JLabel("\uC131       \uBA85");
+		label.setFont(new Font("Dialog", Font.PLAIN, 12));
+		label.setBounds(25, 135, 85, 25);
+		getContentPane().add(label);
+		
+		JLabel label_1 = new JLabel("\uCCB4 \uD06C \uC778");
+		label_1.setBounds(25, 170, 85, 25);
+		getContentPane().add(label_1);
+		
+		JLabel label_2 = new JLabel("\uCCB4\uD06C\uC544\uC6C3");
+		label_2.setBounds(25, 205, 85, 25);
+		getContentPane().add(label_2);
+		
+		JLabel label_3 = new JLabel("\uC219\uBC15\uAE30\uAC04");
+		label_3.setBounds(25, 240, 85, 25);
+		getContentPane().add(label_3);
+		
+		JLabel label_4 = new JLabel("\uD569     \uACC4");
+		label_4.setBounds(25, 275, 85, 25);
+		getContentPane().add(label_4);
+		
+		
+		this.setBounds(0, 0, 340, 480);
+		setLocationRelativeTo(null); // 바탕화면 한가운데 띄우기
+
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setVisible(true);
 	}
 }

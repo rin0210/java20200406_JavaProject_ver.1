@@ -35,6 +35,7 @@ public class Join extends JFrame {
 		super("회원가입");
 		this.cc = cc;
 		hm = HMain.getInstance();
+
 		this.setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 350, 440);
 		setLocationRelativeTo(null); // 프레임창이 바탕화면 한가운데 띄워짐
@@ -105,38 +106,38 @@ public class Join extends JFrame {
 		hipen1.setBounds(150, 220, 20, 20);
 		hipen2.setBounds(210, 220, 20, 20);
 		txtAddr.setBounds(100, 260, 210, 20);
-		
-		txtId.addKeyListener(new KeyAdapter(){ // 아이디 글자수 제한
+
+		txtId.addKeyListener(new KeyAdapter() { // 아이디 글자수 제한
 			public void keyTyped(KeyEvent k) {
 				JTextField src = (JTextField) k.getSource();
-				if(src.getText().length()>=15) {
+				if (src.getText().length() >= 15) {
 					k.consume();
 				}
 			}
 		});
-		
-		txtTel1.addKeyListener(new KeyAdapter(){ // 전화번호 글자수 제한
+
+		txtTel1.addKeyListener(new KeyAdapter() { // 전화번호 글자수 제한
 			public void keyTyped(KeyEvent k) {
 				JTextField src = (JTextField) k.getSource();
-				if(src.getText().length()>=3) {
+				if (src.getText().length() >= 3) {
 					k.consume();
 				}
 			}
 		});
-		
-		txtTel2.addKeyListener(new KeyAdapter(){
+
+		txtTel2.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent k) {
 				JTextField src = (JTextField) k.getSource();
-				if(src.getText().length()>=4) {
+				if (src.getText().length() >= 4) {
 					k.consume();
 				}
 			}
 		});
-		
-		txtTel3.addKeyListener(new KeyAdapter(){
+
+		txtTel3.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent k) {
 				JTextField src = (JTextField) k.getSource();
-				if(src.getText().length()>=4) {
+				if (src.getText().length() >= 4) {
 					k.consume();
 				}
 			}
@@ -169,13 +170,13 @@ public class Join extends JFrame {
 					idCheckLabel.setText(" *아이디를 입력해주세요.");
 				} else {
 					idCheckLabel.setText("");
-					cc.send("*id " + txtId.getText());
+					cc.send("/idChk " + txtId.getText());
 					chkMsg();
 				}
 			}
 		});
 
-		applyBtn = new JButton("가입 신청");
+		applyBtn = new JButton("가입신청");
 		applyBtn.setFont(new Font("돋움", Font.PLAIN, 12));
 		applyBtn.setFocusPainted(false);
 		applyBtn.setBounds(120, 330, 90, 25);
@@ -188,7 +189,7 @@ public class Join extends JFrame {
 				if (txtId.getText().equals("") || txtPwd.getText().equals("") || txtName.getText().equals("")
 						|| txtTel1.getText().equals("") || txtTel2.getText().equals("") || txtTel3.getText().equals("")
 						|| txtAddr.getText().equals("")) {
-					allCheckLabel.setText("등록이 필요한 기본정보입니다. 모두 입력해주세요.");
+					allCheckLabel.setText("*등록이 필요한 기본정보입니다. 모두 입력해주세요.");
 					chk = false;
 
 				} else if (txtPwd.getText().length() < 6) {
@@ -255,7 +256,7 @@ public class Join extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				hm.setVisible(true);
+				hm.visible(1);
 				dispose();
 			}
 		});
@@ -302,7 +303,7 @@ public class Join extends JFrame {
 
 		} else if (msg.indexOf("memberOk") > -1) {
 			JOptionPane.showMessageDialog(null, "회원등록이 완료되었습니다.", "Message", JOptionPane.INFORMATION_MESSAGE);
-			hm.setVisible(true);
+			hm.visible(1);
 			dispose();
 		}
 	}

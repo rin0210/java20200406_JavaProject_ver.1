@@ -7,8 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,15 +35,22 @@ public class Reservation extends JFrame {
 	private CConnect cc = null;
 	private CalendarData cd = null;
 	private CompareDate cpd = null;
+	private Reservation rv = null;
 
 	private String chkInDay = null;
 	private String chkOutDay = null;
 	private String adultCombo = null;
 	private String kidCombo = null;
+	private String night = null;
+	private String chk = null; // 회원인지 비회원인지 체크
+	private String id = null;
 
-	public Reservation(CConnect cc) {
+	public Reservation(CConnect cc, String id, String chk) {
 		super("객실예약");
 		this.cc = cc;
+		this.rv = this;
+		this.id = id;
+		this.chk = chk;
 
 		getContentPane().setLayout(null); // 배치관리자 해제
 		this.setBounds(0, 0, 635, 370);
@@ -205,7 +214,14 @@ public class Reservation extends JFrame {
 						String info = chkInDay + " " + chkOutDay + " " + adultCombo + " " + kidCombo;
 						System.out.println(info);
 
-						cpd = new CompareDate(cc, info);
+						String[] mine = new String[7];
+
+						mine[2] = String.valueOf(people) + " ";
+						mine[3] = chkInDay + " ";
+						mine[4] = chkOutDay + " ";
+						mine[5] = night + " ";
+
+						cpd = new CompareDate(cc, rv, chk, info, night, mine);
 						dispose();
 					}
 
@@ -243,7 +259,7 @@ public class Reservation extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new Choice(cc);
+				new Choice(cc, id);
 				dispose();
 			}
 		});
@@ -274,6 +290,7 @@ public class Reservation extends JFrame {
 	// 선택한 날짜 셋팅
 	public void chkInOutDay(String b, String s, int y, int m, int d) { // b:전체날짜, s:in/out구분
 		System.out.println(y + "/" + m + "/" + d);
+		
 		if (s.equals("In")) {
 			textField.setText(b);
 			calIn.set(y, m, d);
@@ -281,8 +298,8 @@ public class Reservation extends JFrame {
 			String strFormat = "yyyy-MM-dd"; // cConnect로 넘겨주기위해서 String으로 형변환시킴
 			SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
 			chkInDay = sdf.format(calIn.getTime());
-			System.out.println(chkInDay);
-
+			System.out.println("chkInDay: " + chkInDay);
+			
 		} else if (s.equals("Out")) {
 			textField_1.setText(b);
 			calOut.set(y, m, d);
@@ -290,16 +307,18 @@ public class Reservation extends JFrame {
 			String strFormat = "yyyy-MM-dd";
 			SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
 			chkOutDay = sdf.format(calOut.getTime());
-			System.out.println(chkOutDay);
+			System.out.println("chkOutDay: " + chkOutDay);
+			
 		}
 
 		if (!textField.getText().equals("") && !textField_1.getText().equals("")) { // 체크인아웃 날짜를 모두 선택하면
-			int compare = calIn.compareTo(calOut); // 체크인아웃 날짜 비교하는 변수
+			int compare = chkInDay.compareTo(chkOutDay); // 체크인아웃 날짜 비교하는 변수
+			System.out.println(compare);
 			if (compare < 0) {
 				long diffSec = (calOut.getTimeInMillis() - calIn.getTimeInMillis()) / 1000; // 두 날짜간의 차이를 1000으로 나누어
 																							// 초단위로 변환
 				long diffDay = diffSec / (24 * 60 * 60); // 1일은 24(시간)*60(분)*60(초)이므로 이를 나누면 일로 변환됨
-				String night = String.valueOf(diffDay);
+				night = String.valueOf(diffDay);
 				textField_2.setText(night);
 			} else {
 				JOptionPane.showMessageDialog(null, "날짜를 다시 확인해주세요.", "Message", JOptionPane.INFORMATION_MESSAGE);

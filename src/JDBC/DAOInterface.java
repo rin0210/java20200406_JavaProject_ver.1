@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 public interface DAOInterface {
 	
-	
-	// 아이디 중복체크, 예약확인
+	// 아이디 중복체크
 	boolean idCheck(String id);
 
 	// 회원등록, 예약등록
